@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 
 # config token (keep private)
-alloy-config-token
+alloy-config-token.txt
