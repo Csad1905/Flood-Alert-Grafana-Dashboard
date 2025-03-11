@@ -100,20 +100,28 @@ def generate_river_level_data():
 
 def insert_data():
     """
-    Generate and insert data into MongoDB collections.
+    Generate and insert data into MongoDB collections,
+    ensuring only the latest 10 records are kept.
     """
     rainfall_data = generate_rainfall_data()
-
-    # Sea level data is only generated for seaside towns.
     sea_level_data = generate_sea_level_data()
-
-    # River level data is only generated for river towns.
     river_level_data = generate_river_level_data()
 
-    # Insert into collections
+    # Insert new data
     rainfall_collection.insert_one(rainfall_data)
     sea_level_collection.insert_one(sea_level_data)
     river_level_collection.insert_one(river_level_data)
+
+    # Ensure only the last 10 entries are kept in each collection
+    for collection in [rainfall_collection,
+                       sea_level_collection,
+                       river_level_collection]:
+        if collection.count_documents({}) > 10:
+            # Get oldest document
+            oldest_entry = collection.find_one(sort=[("timestamp", 1)])
+            if oldest_entry:
+                # Delete the oldest document
+                collection.delete_one({"_id": oldest_entry["_id"]})
 
     print(f"Inserted data at {rainfall_data['timestamp']}")
     print(f"Rainfall: {rainfall_data['rainfall_mm']} mm")
