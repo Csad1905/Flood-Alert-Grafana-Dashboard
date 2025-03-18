@@ -3,15 +3,15 @@ Data generator for the Flooding Data project.
 """
 import random
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pymongo import MongoClient
 from faker import Faker
 
-# Initialize Faker
+# Init Faker
 fake = Faker()
 
-# MongoDB connection string (assuming local MongoDB instance)
-client = MongoClient("mongodb://localhost:27017/")
+# MongoDB connection URI
+client = MongoClient("mongodb://mongodb:27017/")
 db = client["Flooding-Data"]
 
 # Collections
@@ -44,7 +44,7 @@ seaside_towns = [
     "Harwich", "Frinton-on-Sea"
 ]
 
-# List of river towns (locations near rivers)
+# List of river towns
 river_towns = [
     "Ipswich", "Bury St Edmunds", "Stowmarket",
     "Sudbury", "Haverhill", "Mildenhall",
@@ -64,7 +64,7 @@ def generate_rainfall_data():
     return {
         "station_id": fake.uuid4(),
         "location": random.choice(locations),
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         # Random rainfall between 0 and 10 mm
         "rainfall_mm": random.uniform(0, 10)
     }
@@ -78,7 +78,7 @@ def generate_sea_level_data():
     return {
         "station_id": fake.uuid4(),
         "location": location,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         # Sea level between 1 and 3 meters
         "sea_level_m": round(random.uniform(1.0, 3.0), 1)
     }
@@ -92,7 +92,7 @@ def generate_river_level_data():
     return {
         "station_id": fake.uuid4(),
         "location": location,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         # River level between 2 and 5 meters
         "river_level_m": round(random.uniform(2.0, 5.0), 1)
     }
